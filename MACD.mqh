@@ -14,10 +14,10 @@ class MACD {
   public:
     MACD(int fastEMAPer, int slowEMAPer, int signalPer, int price);
 
-    double GetValueMain();
-    double GetValueSignal();
-    MACDDirection GetDirection();
-    MACDDirection GetDirectionComposed();
+    double GetValueMain(int barIndex);
+    double GetValueSignal(int barIndex);
+    MACDDirection GetDirection(int barIndex);
+    MACDDirection GetDirectionComposed(int barIndex);
 };
 
 //+------------------------------------------------------------------+
@@ -33,31 +33,31 @@ MACD::MACD(int fastEMAPer, int slowEMAPer, int signalPer, int price) {
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-double MACD::GetValueMain() {
+double MACD::GetValueMain(int barIndex) {
     return NormalizeDouble(iMACD(
                                _Symbol, _Period, fastEMAPeriod, slowEMAPeriod,
-                               signalPeriod, appliedPrice, MODE_MAIN, 0
+                               signalPeriod, appliedPrice, MODE_MAIN, barIndex
                            ), Digits);
 }
 
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-double MACD::GetValueSignal() {
+double MACD::GetValueSignal(int barIndex) {
     return NormalizeDouble(iMACD(
                                _Symbol, _Period, fastEMAPeriod, slowEMAPeriod,
-                               signalPeriod, appliedPrice, MODE_SIGNAL, 0
+                               signalPeriod, appliedPrice, MODE_SIGNAL, barIndex
                            ), Digits);
 }
 
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-MACDDirection MACD::GetDirection() {
-    if(GetValueMain() > 0) {
+MACDDirection MACD::GetDirection(int barIndex) {
+    if(GetValueMain(barIndex) > 0) {
         return(MACDBuying);
     }
-    if(GetValueMain() < 0) {
+    if(GetValueMain(barIndex) < 0) {
         return(MACDSelling);
     }
     return(MACDNeutral);
@@ -66,11 +66,11 @@ MACDDirection MACD::GetDirection() {
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-MACDDirection MACD::GetDirectionComposed() {
-    if(GetValueMain() > 0 && GetValueSignal() > 0) {
+MACDDirection MACD::GetDirectionComposed(int barIndex) {
+    if(GetValueMain(barIndex) > 0 && GetValueSignal(barIndex) > 0) {
         return(MACDBuying);
     }
-    if(GetValueMain() < 0 && GetValueSignal() < 0) {
+    if(GetValueMain(barIndex) < 0 && GetValueSignal(barIndex) < 0) {
         return(MACDSelling);
     }
     return(MACDNeutral);
