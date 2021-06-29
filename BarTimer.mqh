@@ -12,10 +12,11 @@ datetime GetCurrentBarTime() {
 }
 
 class BarTimer {
-  public:
     datetime barTime;
 
+  public:
     BarTimer();
+
     bool IsNewBarTime();
 };
 
@@ -31,10 +32,7 @@ BarTimer::BarTimer() {
 //+------------------------------------------------------------------+
 bool BarTimer::IsNewBarTime() {
     datetime newBarTime = GetCurrentBarTime();
-    if(newBarTime == NULL) {
-        return(false);
-    }
-    if(barTime == newBarTime) {
+    if(newBarTime == NULL || barTime == newBarTime) {
         return(false);
     }
     barTime = newBarTime;
