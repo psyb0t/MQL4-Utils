@@ -5,7 +5,7 @@
 
 struct TradeStatus {
     Error error;
-    int ticketNumber;
+    Trade trade;
 };
 
 class Trader {
@@ -29,39 +29,14 @@ Trader::Trader(int magicNum) {
 //|                                                                  |
 //+------------------------------------------------------------------+
 TradeStatus Trader::DoTrade(TradeType t, string cmnt, double vol, double sl, double tp) {
-    Trade trade(t, cmnt, vol, sl, tp);
-    int opType;
-    color arrowColor;
-    double orderPrice;
-    double minStopLevel = MarketInfo(_Symbol, MODE_STOPLEVEL);
-    TradeStatus tradeStatus = {};
-    if(t == TradeTypeBuy) {
-        opType = OP_BUY;
-        orderPrice = Ask;
-        arrowColor = clrGreen;
-    } else if(t == TradeTypeSell) {
-        opType = OP_SELL;
-        orderPrice = Bid;
-        arrowColor = clrRed;
-    } else {
-        Alert("Invalid TradeType");
-        tradeStatus.error.code = ERR_INVALID_TRADE_PARAMETERS;
-        tradeStatus.error.text = ErrorDescription(tradeStatus.error.code);
-        return(tradeStatus);
-    }
-    int ticketNumber = OrderSend(
-                           _Symbol, opType, trade.volume, orderPrice,
-                           (int) MarketInfo(_Symbol, MODE_SPREAD),
-                           trade.stopLoss, trade.takeProfit, trade.comment,
-                           magicNumber, 0, arrowColor
-                       );
-    Error error = GetError();
+    Trade trade(t, cmnt, vol, sl, tp, magicNumber);
+    TradeStatus tradeStatus;
+    Error error = trade.Send();
     tradeStatus.error = error;
-    tradeStatus.ticketNumber = ticketNumber;
-    if(tradeStatus.error.code != ERR_NO_ERROR) {
+    if(IsError(tradeStatus.error)) {
         return(tradeStatus);
     }
-    trade.ticketNumber = ticketNumber;
+    tradeStatus.trade = trade;
     AddToBeginningOfArray(trade, tradeHistory);
     return(tradeStatus);
 }
