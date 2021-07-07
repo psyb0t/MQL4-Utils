@@ -1,23 +1,28 @@
 //+------------------------------------------------------------------+
+#include <MyUtils/Error.mqh>
+
+//+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 datetime GetCurrentBarTime() {
     datetime currTime[1];
-    if(CopyTime(_Symbol, _Period, 0, 1, currTime) == 0) {
-        Alert("Error in copying historical times data, error =", GetLastError());
-        ResetLastError();
+    CopyTime(_Symbol, _Period, 0, 1, currTime);
+    Error error = GetError();
+    if(IsError(error)) {
+        Print(StringFormat("GetCurrentBarTime ERR: %d - %s", error.code, error.text));
         return(NULL);
     }
     return currTime[0];
 }
 
 class BarTimer {
-    datetime barTime;
-
   public:
     BarTimer();
 
     bool IsNewBarTime();
+
+  private:
+    datetime barTime;
 };
 
 //+------------------------------------------------------------------+
