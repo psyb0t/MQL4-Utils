@@ -67,6 +67,7 @@ class Trade {
     Trade(TradeType t, string cmnt, double vol, double sl, double tp, int mn);
 
     bool IsClosed();
+    bool IsInProfit();
     Error Close();
     Error CloseVolume(double vol);
     Error UpdateSL(double sl);
@@ -136,6 +137,20 @@ bool Trade::IsClosed() {
         return(true);
     }
     return(false);
+}
+
+bool Trade::IsInProfit() {
+    Error error = selectOrder();
+    if(IsError(error)) {
+        Print(StringFormat("Trade::IsInProfit ERR: %d - %s", error.code, error.text));
+        return(true);
+    }
+    
+    switch(type) {
+        case TradeTypeBuy: return Ask > OrderOpenPrice();
+        case TradeTypeSell: return OrderOpenPrice() > Bid;
+        default: return false;
+    }
 }
 
 //+------------------------------------------------------------------+
@@ -239,7 +254,7 @@ Error Trade::CloseVolume(double vol) {
     }
     if(!gotNewTicketNumber) {
         error.code = ERR_RESOURCE_NOT_FOUND;
-        error.code = "New ticket number not found";
+        error.text = "New ticket number not found";
     }
     return(error);
 }
