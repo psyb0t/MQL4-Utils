@@ -11,26 +11,36 @@ class MovingAverage {
     ENUM_APPLIED_PRICE appliedPrice;
 
   public:
-    MovingAverage(int p, ENUM_MA_METHOD m, ENUM_APPLIED_PRICE ap);
+    MovingAverage(int per, ENUM_MA_METHOD meth, ENUM_APPLIED_PRICE applPrice);
 
-    PricePositionAgainstMA GetPricePosition(double p);
-    double GetValue();
+    double GetValue(int barIndex);
+    PricePositionAgainstMA GetPricePosition(double price, int barIndex);
+    PricePositionAgainstMA GetAskPricePosition();
+    PricePositionAgainstMA GetBidPricePosition();
+    PricePositionAgainstMA GetPricePositionForNumBars(int numBars);
 };
 
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-MovingAverage::MovingAverage(int p, ENUM_MA_METHOD m, ENUM_APPLIED_PRICE ap) {
-    period = p;
-    method = m;
-    appliedPrice = ap;
+MovingAverage::MovingAverage(int per, ENUM_MA_METHOD meth, ENUM_APPLIED_PRICE applPrice) {
+    period = per;
+    method = meth;
+    appliedPrice = applPrice;
 }
 
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-PricePositionAgainstMA MovingAverage::GetPricePosition(double price) {
-    double val = GetValue();
+double MovingAverage::GetValue(int barIndex) {
+    return NormalizeDouble(iMA(_Symbol, _Period, period, 0, method, appliedPrice, barIndex), Digits);
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+PricePositionAgainstMA MovingAverage::GetPricePosition(double price, int barIndex) {
+    double val = GetValue(barIndex);
     if(price > val) {
         return(PricePositionAboveMA);
     }
@@ -43,7 +53,64 @@ PricePositionAgainstMA MovingAverage::GetPricePosition(double price) {
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-double MovingAverage::GetValue() {
-    return NormalizeDouble(iMA(_Symbol, _Period, period, 0, method, appliedPrice, 0), Digits);
+PricePositionAgainstMA MovingAverage::GetAskPricePosition() {
+    return(GetPricePosition(Ask, 0));
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+PricePositionAgainstMA MovingAverage::GetBidPricePosition() {
+    return(GetPricePosition(Bid, 0));
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+PricePositionAgainstMA MovingAverage::GetPricePositionForNumBars(int numBars) {
+    bool isBelow = true;
+    bool isAbove = true;
+    for(int i = 0; i < numBars; i++) {
+        double price;
+        switch(appliedPrice) {
+        case PRICE_CLOSE:
+            price = Close[i];
+            break;
+        case PRICE_OPEN:
+            price = Open[i];
+            break;
+        case PRICE_HIGH:
+            price = High[i];
+            break;
+        case PRICE_LOW:
+            price = Low[i];
+            break;
+        default: {
+            Alert("Unsupported applied price.");
+            return NULL;
+        }
+        }
+        PricePositionAgainstMA barPricePosition = GetPricePosition(price, i);
+        switch(barPricePosition) {
+        case PricePositionAboveMA: {
+            isBelow = false;
+            break;
+        }
+        case PricePositionBelowMA: {
+            isAbove = false;
+            break;
+        }
+        }
+    }
+    if((!isBelow && !isAbove) || (isBelow && isAbove)) {
+        return(PricePositionOnMA);
+    }
+    if(isBelow) {
+        return(PricePositionBelowMA);
+    }
+    if(isAbove) {
+        return(PricePositionAboveMA);
+    }
+    return(PricePositionOnMA);
 }
 //+------------------------------------------------------------------+
