@@ -72,6 +72,7 @@ class Trade {
     Error Close();
     Error CloseVolume(double vol);
     Error UpdateSL(double sl);
+    Error UpdateTP(double tp);
     Error Send();
 
   private:
@@ -317,6 +318,31 @@ Error Trade::UpdateSL(double sl) {
     }
     error = GetErrorByCode(ERR_NO_ERROR);
     stopLoss = sl;
+    return(error);
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+Error Trade::UpdateTP(double tp) {
+    Error error = GetErrorByCode(ERR_NO_ERROR);
+    if(IsClosed()) {
+        error.code = ERR_TRADE_ERROR;
+        error.text = "Trade is closed";
+        return(error);
+    }
+    error = selectOrder();
+    if(IsError(error)) {
+        return(error);
+    }
+    tp = NormalizeDouble(tp, Digits);
+    OrderModify(ticketNumber, OrderOpenPrice(), OrderStopLoss(), tp, 0);
+    error = GetError();
+    if(IsError(error) && error.code != ERR_NO_RESULT) {
+        return(error);
+    }
+    error = GetErrorByCode(ERR_NO_ERROR);
+    takeProfit = tp;
     return(error);
 }
 //+------------------------------------------------------------------+
