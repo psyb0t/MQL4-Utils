@@ -68,6 +68,7 @@ class Trade {
 
     bool IsClosed();
     bool IsInProfit();
+    double GetProfitAsPipValue();
     Error Close();
     Error CloseVolume(double vol);
     Error UpdateSL(double sl);
@@ -139,17 +140,42 @@ bool Trade::IsClosed() {
     return(false);
 }
 
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 bool Trade::IsInProfit() {
     Error error = selectOrder();
     if(IsError(error)) {
         Print(StringFormat("Trade::IsInProfit ERR: %d - %s", error.code, error.text));
         return(true);
     }
-    
+    double closeOrderPrice = TradeTypeToCloseOrderPrice(type);
     switch(type) {
-        case TradeTypeBuy: return Ask > OrderOpenPrice();
-        case TradeTypeSell: return OrderOpenPrice() > Bid;
-        default: return false;
+    case TradeTypeBuy:
+        return closeOrderPrice > OrderOpenPrice();
+    case TradeTypeSell:
+        return OrderOpenPrice() > closeOrderPrice;
+    default:
+        return false;
+    }
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+double Trade::GetProfitAsPipValue() {
+    Error error = selectOrder();
+    if(IsError(error)) {
+        Print(StringFormat("Trade::IsInProfit ERR: %d - %s", error.code, error.text));
+        return(true);
+    }
+    switch(type) {
+    case TradeTypeBuy:
+        return Ask - OrderOpenPrice();
+    case TradeTypeSell:
+        return OrderOpenPrice() - Bid;
+    default:
+        return 0;
     }
 }
 
@@ -286,9 +312,10 @@ Error Trade::UpdateSL(double sl) {
     sl = NormalizeDouble(sl, Digits);
     OrderModify(ticketNumber, OrderOpenPrice(), sl, OrderTakeProfit(), 0);
     error = GetError();
-    if(IsError(error)) {
+    if(IsError(error) && error.code != ERR_NO_RESULT) {
         return(error);
     }
+    error = GetErrorByCode(ERR_NO_ERROR);
     stopLoss = sl;
     return(error);
 }
