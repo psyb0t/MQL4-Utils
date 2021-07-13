@@ -2,6 +2,7 @@
 #include <MyUtils/Trade.mqh>
 
 class RSI {
+    ENUM_TIMEFRAMES timeframe;
     int period;
     ENUM_APPLIED_PRICE appliedPrice;
     double minValForSell; // disabled when == 0
@@ -10,8 +11,8 @@ class RSI {
     double maxValForBuy; // disabled when == 0
 
   public:
-    RSI(int per, ENUM_APPLIED_PRICE applPrice);
-    RSI(int per, ENUM_APPLIED_PRICE applPrice, double minValSell, double maxValSell, double minValBuy, double maxValBuy);
+    RSI(ENUM_TIMEFRAMES tf, int per, ENUM_APPLIED_PRICE applPrice);
+    RSI(ENUM_TIMEFRAMES tf, int per, ENUM_APPLIED_PRICE applPrice, double minValSell, double maxValSell, double minValBuy, double maxValBuy);
 
     double GetValue();
     bool IsOkayForTradeType(TradeType tradeType);
@@ -20,7 +21,8 @@ class RSI {
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-RSI::RSI(int per, ENUM_APPLIED_PRICE applPrice) {
+RSI::RSI(ENUM_TIMEFRAMES tf, int per, ENUM_APPLIED_PRICE applPrice) {
+    timeframe = tf;
     period = per;
     appliedPrice = applPrice;
 }
@@ -28,7 +30,8 @@ RSI::RSI(int per, ENUM_APPLIED_PRICE applPrice) {
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-RSI::RSI(int per, ENUM_APPLIED_PRICE applPrice, double minValSell, double maxValSell, double minValBuy, double maxValBuy) {
+RSI::RSI(ENUM_TIMEFRAMES tf, int per, ENUM_APPLIED_PRICE applPrice, double minValSell, double maxValSell, double minValBuy, double maxValBuy) {
+    timeframe = tf;
     period = per;
     appliedPrice = applPrice;
     minValForSell = minValSell;
@@ -41,7 +44,7 @@ RSI::RSI(int per, ENUM_APPLIED_PRICE applPrice, double minValSell, double maxVal
 //|                                                                  |
 //+------------------------------------------------------------------+
 double RSI::GetValue() {
-    return(iRSI(_Symbol, _Period, period, PRICE_CLOSE, 0));
+    return(iRSI(_Symbol, timeframe, period, PRICE_CLOSE, 0));
 }
 
 //+------------------------------------------------------------------+
