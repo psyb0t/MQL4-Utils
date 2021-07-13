@@ -69,6 +69,7 @@ class Trade {
     bool IsClosed();
     bool IsInProfit();
     double GetProfitAsPipValue();
+    double GetCommission();
     Error Close();
     Error CloseVolume(double vol);
     Error UpdateSL(double sl);
@@ -167,7 +168,7 @@ bool Trade::IsInProfit() {
 double Trade::GetProfitAsPipValue() {
     Error error = selectOrder();
     if(IsError(error)) {
-        Print(StringFormat("Trade::IsInProfit ERR: %d - %s", error.code, error.text));
+        Print(StringFormat("Trade::GetProfitAsPipValue ERR: %d - %s", error.code, error.text));
         return(true);
     }
     switch(type) {
@@ -178,6 +179,18 @@ double Trade::GetProfitAsPipValue() {
     default:
         return 0;
     }
+}
+
+//+------------------------------------------------------------------+
+//| returns -1 if error
+//+------------------------------------------------------------------+
+double Trade::GetCommission() {
+    Error error = selectOrder();
+    if(IsError(error)) {
+        Print(StringFormat("Trade::GetCommission (ticket: %d) ERR: %d - %s", ticketNumber, error.code, error.text));
+        return(-1);
+    }
+    return OrderCommission();
 }
 
 //+------------------------------------------------------------------+
