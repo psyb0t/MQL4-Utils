@@ -68,6 +68,7 @@ class Trade {
 
     bool IsClosed();
     bool IsInProfit();
+    bool IsStopLossAcceptable(double sl);
     double GetProfitAsPipValue();
     double GetCommission();
     Error Close();
@@ -77,15 +78,23 @@ class Trade {
     Error Send();
 
   private:
+    void init();
     Error selectOrder();
 };
 
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-Trade::Trade() {
+void Trade::init() {
     isSent = false;
     ticketNumber = 0;
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+Trade::Trade() {
+    init();
 }
 
 //+------------------------------------------------------------------+
@@ -106,14 +115,13 @@ Trade::Trade(const Trade &trade) {
 //|                                                                  |
 //+------------------------------------------------------------------+
 Trade::Trade(TradeType t, string cmnt, double vol, double sl, double tp, int mn) {
-    isSent = false;
+    init();
     type = t;
     comment = cmnt;
     volume = vol;
     stopLoss = sl;
     takeProfit = tp;
     magicNumber = mn;
-    ticketNumber = 0;
 }
 
 //+------------------------------------------------------------------+
@@ -165,6 +173,21 @@ bool Trade::IsInProfit() {
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+bool Trade::IsStopLossAcceptable(double sl) {
+    double minSLVal = MarketInfo(_Symbol, MODE_STOPLEVEL) * Point;
+    double priceDiff = TradeTypeToSendOrderPrice(type) - sl;
+    if(priceDiff < 0) {
+        priceDiff *= -1;
+    }
+    if(priceDiff < minSLVal) {
+        return(false);
+    }
+    return(true);
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 double Trade::GetProfitAsPipValue() {
     Error error = selectOrder();
     if(IsError(error)) {
@@ -201,6 +224,11 @@ Error Trade::Send() {
     if(isSent) {
         error.code = ERR_TRADE_ERROR;
         error.text = "Already sent";
+        return(error);
+    }
+    if(!IsStopLossAcceptable(stopLoss)) {
+        error.code = ERR_INVALID_STOPS;
+        error.text = "SL is of lower value than accepted";
         return(error);
     }
     int opType;
@@ -309,12 +337,7 @@ Error Trade::UpdateSL(double sl) {
         error.text = "Trade is closed";
         return(error);
     }
-    double minSLVal = MarketInfo(_Symbol, MODE_STOPLEVEL) * Point;
-    double priceDiff = TradeTypeToSendOrderPrice(type) - sl;
-    if(priceDiff < 0) {
-        priceDiff *= -1;
-    }
-    if(priceDiff < minSLVal) {
+    if(!IsStopLossAcceptable(sl)) {
         error.code = ERR_INVALID_STOPS;
         error.text = "SL is of lower value than accepted";
         return(error);

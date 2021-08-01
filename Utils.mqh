@@ -1,12 +1,13 @@
 //+------------------------------------------------------------------+
+// FOR FOREX ONLY
 double GetPipValue() {
-    double val = MathPow(10, -(Digits));
-    // check if broker is counting by pipettes
-    if((int)MarketInfo(_Symbol, MODE_DIGITS) == 5) {
-        // then pip value is *10
-        val *= 10;
+    if(Digits <= 3) {
+        return(0.01);
     }
-    return(val);
+    if(Digits >= 4 ) {
+        return(0.0001);
+    }
+    return(0);
 }
 
 //+------------------------------------------------------------------+
