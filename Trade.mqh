@@ -71,6 +71,7 @@ class Trade {
     bool IsStopLossAcceptable(double sl);
     double GetProfitAsPipValue();
     double GetCommission();
+    double GetOpenPrice();
     Error Close();
     Error CloseVolume(double vol);
     Error UpdateSL(double sl);
@@ -214,6 +215,18 @@ double Trade::GetCommission() {
         return(-1);
     }
     return OrderCommission();
+}
+
+//+------------------------------------------------------------------+
+//| returns -1 if error
+//+------------------------------------------------------------------+
+double Trade::GetOpenPrice() {
+    Error error = selectOrder();
+    if(IsError(error)) {
+        Print(StringFormat("Trade::GetOpenPrice (ticket: %d) ERR: %d - %s", ticketNumber, error.code, error.text));
+        return(-1);
+    }
+    return OrderOpenPrice();
 }
 
 //+------------------------------------------------------------------+
