@@ -72,6 +72,7 @@ class Trade {
     double GetProfitAsPipValue();
     double GetCommission();
     double GetOpenPrice();
+    TradeType GetTradeType();
     Error Close();
     Error CloseVolume(double vol);
     Error UpdateSL(double sl);
@@ -175,6 +176,9 @@ bool Trade::IsInProfit() {
 //|                                                                  |
 //+------------------------------------------------------------------+
 bool Trade::IsStopLossAcceptable(double sl) {
+    if(sl == 0) {
+        return(true);
+    }
     double minSLVal = MarketInfo(_Symbol, MODE_STOPLEVEL) * Point;
     double priceDiff = TradeTypeToSendOrderPrice(type) - sl;
     if(priceDiff < 0) {
@@ -232,6 +236,25 @@ double Trade::GetOpenPrice() {
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+TradeType Trade::GetTradeType() {
+    Error error = selectOrder();
+    if(IsError(error)) {
+        Print(StringFormat("%s (ticket: %d) ERR: %d - %s", __FUNCTION__, ticketNumber, error.code, error.text));
+        return(-1);
+    }
+    int opType = OrderType();
+    switch(opType) {
+    case OP_BUY:
+        return(TradeTypeBuy);
+    case OP_SELL:
+        return(TradeTypeSell);
+    }
+    return(NULL);
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 Error Trade::Send() {
     Error error = GetErrorByCode(ERR_NO_ERROR);
     if(isSent) {
@@ -258,7 +281,9 @@ Error Trade::Send() {
         break;
     }
     default: {
-        return(GetErrorByCode(ERR_INVALID_TRADE_PARAMETERS));
+        error = GetErrorByCode(ERR_INVALID_TRADE_PARAMETERS);
+        error.text = __FUNCTION__ + " - invalid trade type";
+        return(error);
     }
     }
     int ticketNum = OrderSend(
