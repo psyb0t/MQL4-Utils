@@ -72,6 +72,7 @@ class Trade {
     double GetProfitAsPipValue();
     double GetCommission();
     double GetOpenPrice();
+    double GetVolume();
     TradeType GetTradeType();
     Error Close();
     Error CloseVolume(double vol);
@@ -231,6 +232,18 @@ double Trade::GetOpenPrice() {
         return(-1);
     }
     return OrderOpenPrice();
+}
+
+//+------------------------------------------------------------------+
+//| returns -1 if error
+//+------------------------------------------------------------------+
+double Trade::GetVolume() {
+    Error error = selectOrder();
+    if(IsError(error)) {
+        Print(StringFormat("%s (ticket: %d) ERR: %d - %s", __FUNCTION__, ticketNumber, error.code, error.text));
+        return(-1);
+    }
+    return OrderLots();
 }
 
 //+------------------------------------------------------------------+
