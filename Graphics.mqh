@@ -156,4 +156,46 @@ void DrawRectangleLabel(string name,
     ObjectSetInteger(0, name, OBJPROP_HIDDEN, hidden);
     ObjectSetInteger(0, name, OBJPROP_ZORDER, z_order);
 }
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void DrawEditBox(string text,
+                 string name,
+                 int x,
+                 int y,
+                 int font_size,
+                 color clr,
+                 color back_clr,
+                 int width,
+                 int height,
+                 ENUM_BASE_CORNER corner,
+                 int line_width = 1,
+                 bool back = false,
+                 bool selectable = false,
+                 bool hidden = true,
+                 long z_order = 0) {
+    Error error = GetErrorByCode(ERR_NO_ERROR);
+    if(!ObjectCreate(0, name, OBJ_EDIT, 0, 0, 0)) {
+        error = GetError();
+        Print(StringFormat("%s ERR: %d - %s", __FUNCTION__, error.code, error.text));
+        return;
+    }
+    ObjectSetInteger(0, name, OBJPROP_XDISTANCE, x);
+    ObjectSetInteger(0, name, OBJPROP_YDISTANCE, y);
+    ObjectSetInteger(0, name, OBJPROP_XSIZE, width);
+    ObjectSetInteger(0, name, OBJPROP_YSIZE, height);
+    ObjectSetString(0, name, OBJPROP_TEXT, text);
+    ObjectSetString(0, name, OBJPROP_FONT, "Verdana");
+    ObjectSetInteger(0, name, OBJPROP_FONTSIZE, font_size);
+    ObjectSetInteger(0, name, OBJPROP_BGCOLOR, back_clr);
+    ObjectSetInteger(0, name, OBJPROP_CORNER, corner);
+    ObjectSetInteger(0, name, OBJPROP_COLOR, clr);
+    ObjectSetInteger(0, name, OBJPROP_WIDTH, line_width);
+    ObjectSetInteger(0, name, OBJPROP_BACK, back);
+    ObjectSetInteger(0, name, OBJPROP_SELECTABLE, selectable);
+    ObjectSetInteger(0, name, OBJPROP_SELECTED, selectable);
+    ObjectSetInteger(0, name, OBJPROP_HIDDEN, hidden);
+    ObjectSetInteger(0, name, OBJPROP_ZORDER, z_order);
+}
 //+------------------------------------------------------------------+
