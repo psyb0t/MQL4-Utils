@@ -198,4 +198,32 @@ void DrawEditBox(string text,
     ObjectSetInteger(0, name, OBJPROP_HIDDEN, hidden);
     ObjectSetInteger(0, name, OBJPROP_ZORDER, z_order);
 }
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void DrawHorizontalLine(string name,
+                 double price,
+                 color clr,
+                 ENUM_LINE_STYLE style = STYLE_SOLID,
+                 int width = 1,
+                 bool back = true,
+                 bool selectable = false,
+                 bool hidden = true,
+                 long z_order = 0) {
+    Error error = GetErrorByCode(ERR_NO_ERROR);
+    if(!ObjectCreate(0, name, OBJ_HLINE, 0, 0, price)) {
+        error = GetError();
+        Print(StringFormat("%s ERR: %d - %s", __FUNCTION__, error.code, error.text));
+        return;
+    }
+    ObjectSetInteger(0, name, OBJPROP_COLOR, clr);
+    ObjectSetInteger(0, name, OBJPROP_STYLE, style);
+    ObjectSetInteger(0, name, OBJPROP_WIDTH, width);
+    ObjectSetInteger(0, name, OBJPROP_BACK, back);
+    ObjectSetInteger(0, name, OBJPROP_SELECTABLE, selectable);
+    ObjectSetInteger(0, name, OBJPROP_SELECTED, selectable);
+    ObjectSetInteger(0, name, OBJPROP_HIDDEN, hidden);
+    ObjectSetInteger(0, name, OBJPROP_ZORDER, z_order);
+}
 //+------------------------------------------------------------------+

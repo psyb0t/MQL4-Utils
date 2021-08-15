@@ -10,7 +10,7 @@ double GetPipValue() {
 }
 
 //+------------------------------------------------------------------+
-double PipsToValue(int pips) {
+double PipsToValue(double pips) {
     return pips * GetPipValue();
 }
 
