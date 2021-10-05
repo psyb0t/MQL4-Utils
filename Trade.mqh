@@ -324,7 +324,7 @@ Error Trade::Close() {
         error.text = "Already closed";
         return(error);
     }
-    OrderClose(ticketNumber, volume, TradeTypeToCloseOrderPrice(type), (int) MarketInfo(_Symbol, MODE_SPREAD));
+    OrderClose(ticketNumber, GetVolume(), TradeTypeToCloseOrderPrice(type), (int) MarketInfo(_Symbol, MODE_SPREAD));
     return(GetError());
 }
 
