@@ -1,6 +1,6 @@
 //+------------------------------------------------------------------+
-#include <MyUtils/Error.mqh>
-#include <MyUtils/Utils.mqh>
+#include <MQL4-Utils/Error.mqh>
+#include <MQL4-Utils/Utils.mqh>
 
 enum TradeType {
     _TradeTypeNotSet = 0,

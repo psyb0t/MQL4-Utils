@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
-#include <MyUtils/Trade.mqh>
-#include <MyUtils/Array.mqh>
-#include <MyUtils/Error.mqh>
+#include <MQL4-Utils/Trade.mqh>
+#include <MQL4-Utils/Array.mqh>
+#include <MQL4-Utils/Error.mqh>
 
 struct TradeStatus {
     Error error;
