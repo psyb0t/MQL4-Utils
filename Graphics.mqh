@@ -21,7 +21,7 @@ void WriteTextOnPriceHorizontally(string text, double price, int font_size = 7, 
 void _WriteTextOnPrice(string text, double price, double angle = 0, int font_size = 7, color clr = clrRed) {
     string objName = StringFormat("%d-%s", (int) TimeCurrent(), text);
     ObjectCreate(0, objName, OBJ_TEXT, 0, TimeCurrent(), price);
-    ObjectSetText(objName, text, font_size, "Verdana", clr);
+    ObjectSetText(objName, text, font_size, "Arial", clr);
     ObjectSet(objName, OBJPROP_ANGLE, angle);
     Error error = GetError();
     if(IsError(error)) {
@@ -59,7 +59,7 @@ void DrawButton(string text,
     ObjectSetInteger(0, name, OBJPROP_YSIZE, height);
     ObjectSetInteger(0, name, OBJPROP_CORNER, corner);
     ObjectSetString(0, name, OBJPROP_TEXT, text);
-    ObjectSetString(0, name, OBJPROP_FONT, "Verdana");
+    ObjectSetString(0, name, OBJPROP_FONT, "Arial");
     ObjectSetInteger(0, name, OBJPROP_FONTSIZE, font_size);
     ObjectSetInteger(0, name, OBJPROP_COLOR, clr);
     ObjectSetInteger(0, name, OBJPROP_BGCOLOR, back_clr);
@@ -104,7 +104,7 @@ void DrawLabel(string text,
     ObjectSetInteger(0, name, OBJPROP_YDISTANCE, y);
     ObjectSetInteger(0, name, OBJPROP_CORNER, corner);
     ObjectSetString(0, name, OBJPROP_TEXT, text);
-    ObjectSetString(0, name, OBJPROP_FONT, "Verdana");
+    ObjectSetString(0, name, OBJPROP_FONT, "Arial");
     ObjectSetInteger(0, name, OBJPROP_FONTSIZE, font_size);
     ObjectSetDouble(0, name, OBJPROP_ANGLE, angle);
     ObjectSetInteger(0, name, OBJPROP_ANCHOR, anchor);
@@ -186,7 +186,7 @@ void DrawEditBox(string text,
     ObjectSetInteger(0, name, OBJPROP_XSIZE, width);
     ObjectSetInteger(0, name, OBJPROP_YSIZE, height);
     ObjectSetString(0, name, OBJPROP_TEXT, text);
-    ObjectSetString(0, name, OBJPROP_FONT, "Verdana");
+    ObjectSetString(0, name, OBJPROP_FONT, "Arial");
     ObjectSetInteger(0, name, OBJPROP_FONTSIZE, font_size);
     ObjectSetInteger(0, name, OBJPROP_BGCOLOR, back_clr);
     ObjectSetInteger(0, name, OBJPROP_CORNER, corner);
@@ -203,14 +203,14 @@ void DrawEditBox(string text,
 //|                                                                  |
 //+------------------------------------------------------------------+
 void DrawHorizontalLine(string name,
-                 double price,
-                 color clr,
-                 ENUM_LINE_STYLE style = STYLE_SOLID,
-                 int width = 1,
-                 bool back = true,
-                 bool selectable = false,
-                 bool hidden = true,
-                 long z_order = 0) {
+                        double price,
+                        color clr,
+                        ENUM_LINE_STYLE style = STYLE_SOLID,
+                        int width = 1,
+                        bool back = true,
+                        bool selectable = false,
+                        bool hidden = true,
+                        long z_order = 0) {
     Error error = GetErrorByCode(ERR_NO_ERROR);
     if(!ObjectCreate(0, name, OBJ_HLINE, 0, 0, price)) {
         error = GetError();
