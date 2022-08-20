@@ -52,7 +52,7 @@ double TradeTypeToCloseOrderPrice(TradeType tradeType) {
 }
 
 class Trade {
-  public:
+public:
     bool isSent;
     TradeType type;
     string comment;
@@ -80,7 +80,7 @@ class Trade {
     Error UpdateTP(double tp);
     Error Send();
 
-  private:
+private:
     void init();
     Error selectOrder();
 };
