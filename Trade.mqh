@@ -24,6 +24,19 @@ TradeType OpTypeToTradeType(int opType) {
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+int TradeTypeToOpType(TradeType trade_type) {
+    switch(trade_type) {
+    case TradeTypeBuy:
+        return OP_BUY;
+    case TradeTypeSell:
+        return OP_SELL;
+    }
+    return(0);
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 double TradeTypeToSendOrderPrice(TradeType tradeType) {
     switch(tradeType) {
     case TradeTypeBuy: {
