@@ -116,6 +116,14 @@ void DrawLabel(string text,
     ObjectSetInteger(0, name, OBJPROP_ZORDER, z_order);
 }
 
+void UpdateLabel(string name, string text) {
+    ObjectSetString(0, name, OBJPROP_TEXT, text);
+    int errCode = GetLastError();
+    if (errCode != ERR_NO_ERROR) {
+        Print(StringFormat("%s - could not update label - %s", __FUNCTION__, ErrorDescription(errCode)));
+    }
+}
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
