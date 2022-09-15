@@ -116,6 +116,9 @@ void DrawLabel(string text,
     ObjectSetInteger(0, name, OBJPROP_ZORDER, z_order);
 }
 
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 void UpdateLabel(string name, string text) {
     ObjectSetString(0, name, OBJPROP_TEXT, text);
     int errCode = GetLastError();
@@ -233,5 +236,16 @@ void DrawHorizontalLine(string name,
     ObjectSetInteger(0, name, OBJPROP_SELECTED, selectable);
     ObjectSetInteger(0, name, OBJPROP_HIDDEN, hidden);
     ObjectSetInteger(0, name, OBJPROP_ZORDER, z_order);
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void UpdateHorizontalLine(string name, double price) {
+    ObjectMove(0, name, 0, 0, price);
+    int errCode = GetLastError();
+    if (errCode != ERR_NO_ERROR) {
+        Print(StringFormat("%s - could not update label - %s", __FUNCTION__, ErrorDescription(errCode)));
+    }
 }
 //+------------------------------------------------------------------+
